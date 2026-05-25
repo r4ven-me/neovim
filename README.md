@@ -2,7 +2,7 @@
 
 A personal Lua-based Neovim configuration with `lazy.nvim`, Nord styling, Treesitter highlighting, a lightweight lint/format layer, and an easy way to enable LSP when needed.
 
-This config is not trying to be a full IDE bundle. Its focus is a pleasant UI, fast startup, syntax highlighting, diagnostics through external CLI linters, formatting on demand, and comfortable file/buffer navigation.
+This config is not trying to be a full IDE bundle. Its focus is a pleasant UI, fast startup, syntax highlighting, optional diagnostics through external CLI linters, formatting on demand, and comfortable file/buffer navigation.
 
 ## Requirements
 
@@ -123,7 +123,7 @@ Main keybindings:
 | `F4` | Toggle floating terminal |
 | `F5` | Save and run the current `sh`/`python` file |
 | `F7` | Run lint manually |
-| `Shift+F7` / `F19` | Disable lint for the current session |
+| `Shift+F7` / `F19` | Disable automatic lint for the current session |
 | `leader + f` | Format the buffer with conform.nvim |
 | `leader + d` | Show line diagnostics |
 | `[d` / `]d` | Go to previous/next diagnostic |
@@ -136,7 +136,7 @@ The leader key is currently Space.
 
 ## Lint
 
-Linting is configured through `mfussenegger/nvim-lint`, without requiring LSP.
+Linting is configured through `mfussenegger/nvim-lint`, without requiring LSP. Automatic linting starts disabled and can be enabled for the current session with `:LinterToggle`.
 
 Supported linters are enabled only if found on the system:
 
@@ -153,6 +153,7 @@ Commands:
 
 ```vim
 :Lint
+:LinterToggle
 :LintToggle
 ```
 
@@ -237,4 +238,3 @@ After updating, you can check startup without the UI:
 ```bash
 nvim --headless '+lua print("config ok")' '+qa'
 ```
-

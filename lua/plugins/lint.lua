@@ -3,7 +3,7 @@ return {
   event = { "BufReadPost", "BufNewFile" },
   config = function()
     local lint = require("lint")
-    local enabled = true
+    local enabled = false
 
     lint.linters.shellcheck.args = {
       "--format",
@@ -44,9 +44,13 @@ return {
 
     local timer
 
+    local function run_lint()
+      lint.try_lint()
+    end
+
     local function try_lint()
       if enabled then
-        lint.try_lint()
+        run_lint()
       end
     end
 
@@ -63,20 +67,24 @@ return {
       callback = try_lint_debounced,
     })
 
-    vim.api.nvim_create_user_command("Lint", try_lint, {})
-    vim.api.nvim_create_user_command("LintToggle", function()
+    vim.api.nvim_create_user_command("Lint", run_lint, {})
+
+    local function toggle_linter()
       enabled = not enabled
       if not enabled then
         vim.diagnostic.reset(nil, 0)
       end
       vim.notify("Lint " .. (enabled and "enabled" or "disabled"))
-    end, {})
+    end
+
+    vim.api.nvim_create_user_command("LinterToggle", toggle_linter, {})
+    vim.api.nvim_create_user_command("LintToggle", toggle_linter, {})
 
     vim.keymap.set({ "n", "i" }, "<F7>", function()
       if vim.api.nvim_get_mode().mode:match("^i") then
         vim.cmd.stopinsert()
       end
-      try_lint()
+      run_lint()
     end, { desc = "Run lint" })
 
     vim.keymap.set({ "n", "i" }, "<S-F7>", function()

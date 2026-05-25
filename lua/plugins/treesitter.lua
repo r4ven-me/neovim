@@ -1,5 +1,6 @@
 return {
   "nvim-treesitter/nvim-treesitter",
+  branch = "master",
   build = ":TSUpdate",
   event = { "BufReadPost", "BufNewFile" },
   opts = {
@@ -36,6 +37,12 @@ return {
     },
   },
   config = function(_, opts)
-    require("nvim-treesitter.configs").setup(opts)
+    local ok, configs = pcall(require, "nvim-treesitter.configs")
+    if not ok then
+      vim.notify("nvim-treesitter legacy config module is unavailable", vim.log.levels.WARN)
+      return
+    end
+
+    configs.setup(opts)
   end,
 }
