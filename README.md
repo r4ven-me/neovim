@@ -64,6 +64,26 @@ On first startup, the config automatically:
 - creates service directories under `~/.local/state/nvim`;
 - starts installing the required Treesitter parsers.
 
+For unattended installs, install plugins and Treesitter parsers before the
+first interactive Neovim launch:
+
+```bash
+~/Cloud/Projects/dots/bin/install-nvim-treesitter-parsers
+```
+
+Example Ansible task for the `dots` role, after Neovim is installed and the
+dotfiles are linked/copied:
+
+```yaml
+- name: Install Neovim Treesitter parsers
+  ansible.builtin.command: "{{ dots_repo_dir }}/bin/install-nvim-treesitter-parsers"
+  become: false
+  changed_when: false
+```
+
+where `dots_repo_dir` is the checked out dotfiles path, for example
+`{{ ansible_env.HOME }}/Cloud/Projects/dots`.
+
 To check or update plugins manually:
 
 ```vim
@@ -117,11 +137,12 @@ Main keybindings:
 
 | Key | Action |
 | --- | --- |
-| `F2` | Telescope buffer list |
-| `Shift+F2` / `F14` | Telescope live grep |
+| `F2` | Exact file search in the current file directory |
+| `Shift+F2` | Search file contents in the current file directory |
 | `F3` | Toggle Neo-tree |
-| `F4` | Toggle floating terminal |
-| `F5` | Save and run the current `sh`/`python` file |
+| `F4` | Toggle bottom terminal |
+| `F5` | Telescope buffer list |
+| `Shift+F5` | Save and run the current `sh`/`python` file |
 | `F7` | Run lint manually |
 | `Shift+F7` / `F19` | Disable automatic lint for the current session |
 | `leader + f` | Format the buffer with conform.nvim |

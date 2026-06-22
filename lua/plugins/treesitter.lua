@@ -4,7 +4,7 @@ return {
   build = ":TSUpdate",
   event = { "BufReadPost", "BufNewFile" },
   opts = {
-    auto_install = true,
+    auto_install = false,
     ensure_installed = {
       "lua",
       "vim",
@@ -27,7 +27,9 @@ return {
       "css",
       "html",
     },
-    sync_install = false,
+    -- Avoid concurrent installers racing over tree-sitter-<parser>-tmp
+    -- while bootstrapping Neovim on a clean host.
+    sync_install = true,
     highlight = {
       enable = true,
       additional_vim_regex_highlighting = false,

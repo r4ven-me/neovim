@@ -34,7 +34,7 @@ vim.api.nvim_create_autocmd("FileType", {
       vim.cmd("!" .. vim.fn.shellescape(file))
     end
 
-    vim.keymap.set({ "n", "i" }, "<F5>", run_current_file, {
+    vim.keymap.set({ "n", "i" }, "<S-F5>", run_current_file, {
       buffer = event.buf,
       desc = "Save and run current file",
     })
@@ -67,6 +67,49 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 vim.api.nvim_create_autocmd("SessionLoadPost", {
   group = group,
   command = "wincmd =",
+})
+
+local function is_editor_buffer(buf)
+  if not vim.api.nvim_buf_is_valid(buf) or vim.bo[buf].buftype ~= "" or vim.bo[buf].filetype == "neo-tree" then
+    return false
+  end
+
+  if vim.api.nvim_buf_get_name(buf) ~= "" or vim.bo[buf].modified then
+    return true
+  end
+
+  local lines = vim.api.nvim_buf_get_lines(buf, 0, 2, false)
+  return #lines > 1 or lines[1] ~= ""
+end
+
+vim.api.nvim_create_autocmd("QuitPre", {
+  group = group,
+  callback = function()
+    local current_win = vim.api.nvim_get_current_win()
+    if not is_editor_buffer(vim.api.nvim_get_current_buf()) then
+      return
+    end
+
+    local auxiliary_windows = {}
+    for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+      if win ~= current_win then
+        local buf = vim.api.nvim_win_get_buf(win)
+        if is_editor_buffer(buf) then
+          return
+        end
+
+        if vim.bo[buf].filetype == "neo-tree" or vim.bo[buf].buftype == "terminal" then
+          table.insert(auxiliary_windows, win)
+        end
+      end
+    end
+
+    for _, win in ipairs(auxiliary_windows) do
+      if vim.api.nvim_win_is_valid(win) then
+        vim.api.nvim_win_close(win, true)
+      end
+    end
+  end,
 })
 
 vim.api.nvim_create_autocmd("VimLeavePre", {

@@ -31,7 +31,7 @@ vim.opt.scrolloff = 7
 vim.opt.showmode = false
 vim.opt.showcmd = false
 vim.opt.cursorline = true
-vim.opt.cursorlineopt = "number"
+vim.opt.cursorlineopt = "both"
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
 vim.opt.laststatus = 2
@@ -51,6 +51,7 @@ vim.opt.splitright = true
 vim.opt.equalalways = true
 vim.opt.updatetime = 250
 vim.opt.timeoutlen = 500
+vim.opt.ttimeoutlen = 200
 vim.opt.completeopt = { "menu", "menuone", "noselect" }
 vim.opt.signcolumn = "yes"
 

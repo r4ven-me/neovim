@@ -23,6 +23,8 @@ return {
       hl(0, "CursorIM", { fg = "#2E3440", bg = "#A3BE8C" })
       hl(0, "CursorLine", { bg = "#3B4252" })
       hl(0, "CursorLineNr", { fg = "#ECEFF4", bg = "#3A4150", bold = true })
+      hl(0, "WinSeparator", { fg = "#88C0D0", bg = "#2E3440" })
+      hl(0, "ToggleTermSeparator", { fg = "#88C0D0", bg = "#2E3440" })
       hl(0, "MatchParen", { fg = "#8FBCBB", bg = "NONE", bold = true, underline = true })
 
       hl(0, "DiagnosticSignError", { fg = "#BF616A", bg = "NONE" })

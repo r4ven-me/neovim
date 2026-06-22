@@ -13,6 +13,26 @@ return {
   opts = {
     close_if_last_window = true,
     enable_git_status = true,
+    event_handlers = {
+      {
+        event = "neo_tree_window_after_open",
+        handler = function()
+          local terminal_win = vim.t.toggleterm_restore_win
+          vim.t.toggleterm_restore_win = nil
+
+          vim.schedule(function()
+            if _G.keep_bottom_terminal_full_width then
+              _G.keep_bottom_terminal_full_width(false)
+            end
+
+            if type(terminal_win) == "number" and vim.api.nvim_win_is_valid(terminal_win) then
+              vim.api.nvim_set_current_win(terminal_win)
+              vim.cmd.startinsert()
+            end
+          end)
+        end,
+      },
+    },
     window = {
       width = 35,
     },

@@ -18,8 +18,8 @@ return {
     ]])
 
     vim.cmd([[
-      function! OpenFloatTerminal(_1, _2, _3, _4)
-        ToggleTerm
+      function! OpenBottomTerminal(_1, _2, _3, _4)
+        lua toggle_bottom_terminal()
       endfunction
     ]])
 
@@ -61,7 +61,7 @@ return {
           right = function()
             return {
               { text = " ", fg = "#5E81AC" },
-              { text = " %@OpenFloatTerminal@  %X ", bg = "#5E81AC", fg = "#ECEFF4", gui = "bold" },
+              { text = " %@OpenBottomTerminal@  %X ", bg = "#5E81AC", fg = "#ECEFF4", gui = "bold" },
             }
           end,
         },
