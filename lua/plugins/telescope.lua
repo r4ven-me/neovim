@@ -42,29 +42,33 @@ return {
       desc = "Buffers",
     },
   },
-  opts = {
-    defaults = {
-      mappings = {
-        i = {
-          ["<Esc>"] = require("telescope.actions").close,
+  config = function()
+    local actions = require("telescope.actions")
+
+    require("telescope").setup({
+      defaults = {
+        mappings = {
+          i = {
+            ["<Esc>"] = actions.close,
+          },
+          n = {
+            ["<Esc>"] = actions.close,
+          },
         },
-        n = {
-          ["<Esc>"] = require("telescope.actions").close,
+        layout_config = {
+          horizontal = {
+            width = 0.9,
+            height = 0.7,
+            preview_width = 0.5,
+          },
+          vertical = {
+            width = 0.9,
+            height = 0.9,
+            preview_height = 0.5,
+          },
         },
+        layout_strategy = "horizontal",
       },
-      layout_config = {
-        horizontal = {
-          width = 0.9,
-          height = 0.7,
-          preview_width = 0.5,
-        },
-        vertical = {
-          width = 0.9,
-          height = 0.9,
-          preview_height = 0.5,
-        },
-      },
-      layout_strategy = "horizontal",
-    },
-  },
+    })
+  end,
 }
