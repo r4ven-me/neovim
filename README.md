@@ -180,6 +180,7 @@ The leader key is `Space`.
 | `F2` | Find files in the current file directory |
 | `Shift+F2` | Search file contents in the current file directory |
 | `F3` | Toggle Neo-tree |
+| `Shift+F3` / `F15` | Format the current buffer or visual selection |
 | `F4` | Toggle the bottom terminal |
 | `F5` | Toggle the CodeCompanion AI chat |
 | `Shift+F5` | Save and run the current shell or Python file |

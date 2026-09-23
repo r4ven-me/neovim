@@ -10,6 +10,8 @@
 #   make release TAG=v1.2.0                # commit if dirty, tag, push
 #   make release TAG=raven                 # same, with a codename tag
 #   make release TAG=v1.2.0 MSG="Add X"     # custom commit + tag message
+#   make release TAG=v1.2.0                # TAG already exists: deletes it
+#                                           # locally + on origin, re-tags HEAD
 #   make version                           # print the latest vX.Y.Z tag
 #   make codename                          # print the latest codename tag
 
@@ -29,23 +31,26 @@ codename:
 	@git describe --tags --abbrev=0 --exclude 'v*' 2>/dev/null || echo 'no codename tags yet'
 
 # TAG is optional: without it, this just commits (if dirty) and pushes
-# HEAD — no tag created. TAG/MSG are passed through the environment
-# ($$TAG/$$MSG) rather than substituted by Make ($(TAG)/$(MSG)) into the
-# recipe text: a raw Make substitution lands inside the shell's command
-# line unescaped, so a message containing backticks or $(...) would
-# execute as a command. `--` stops git from reading a TAG starting with
-# `-` as an option.
+# HEAD — no tag created. If TAG already exists (locally or on origin), it
+# is deleted both places and recreated on the new HEAD — re-running
+# release with the same TAG moves it forward rather than failing. TAG/MSG
+# are passed through the environment ($$TAG/$$MSG) rather than substituted
+# by Make ($(TAG)/$(MSG)) into the recipe text: a raw Make substitution
+# lands inside the shell's command line unescaped, so a message containing
+# backticks or $(...) would execute as a command. `--` stops git from
+# reading a TAG starting with `-` as an option.
 release:
-	@if [ -n "$$TAG" ] && git rev-parse "refs/tags/$$TAG" >/dev/null 2>&1; then \
-		echo "release: tag $$TAG already exists" >&2; \
-		exit 1; \
-	fi
 	@if [ -n "$$(git status --porcelain)" ]; then \
 		git add -A; \
 		git commit -m "$$MSG"; \
 	fi
 	git push origin HEAD
 	@if [ -n "$$TAG" ]; then \
+		if git rev-parse "refs/tags/$$TAG" >/dev/null 2>&1; then \
+			echo "release: tag $$TAG already exists, moving it to current HEAD" >&2; \
+			git tag -d -- "$$TAG"; \
+			git push origin --delete -- "$$TAG" 2>/dev/null || true; \
+		fi; \
 		git tag -a -m "$$MSG" -- "$$TAG"; \
 		git push origin -- "$$TAG"; \
 	fi
