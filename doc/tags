@@ -1,0 +1,11 @@
+nvim-config	nvim-config.txt	/*nvim-config*
+nvim-config-ai	nvim-config.txt	/*nvim-config-ai*
+nvim-config-keybindings	nvim-config.txt	/*nvim-config-keybindings*
+nvim-config-lint-format	nvim-config.txt	/*nvim-config-lint-format*
+nvim-config-linters	nvim-config.txt	/*nvim-config-linters*
+nvim-config-maintenance	nvim-config.txt	/*nvim-config-maintenance*
+nvim-config-overview	nvim-config.txt	/*nvim-config-overview*
+nvim-config-requirements	nvim-config.txt	/*nvim-config-requirements*
+nvim-config-sessions	nvim-config.txt	/*nvim-config-sessions*
+nvim-config-telescope	nvim-config.txt	/*nvim-config-telescope*
+nvim-config-terminal	nvim-config.txt	/*nvim-config-terminal*

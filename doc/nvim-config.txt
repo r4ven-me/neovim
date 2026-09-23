@@ -1,0 +1,237 @@
+*nvim-config.txt*  Personal Neovim configuration
+
+=============================================================================
+CONTENTS                                                     *nvim-config*
+
+1. Overview                                            |nvim-config-overview|
+2. Requirements                                    |nvim-config-requirements|
+3. Linters                                             |nvim-config-linters|
+4. Keybindings                                      |nvim-config-keybindings|
+5. AI chat                                                  |nvim-config-ai|
+6. Telescope                                         |nvim-config-telescope|
+7. Terminal                                           |nvim-config-terminal|
+8. Lint and format                                  |nvim-config-lint-format|
+9. Sessions                                           |nvim-config-sessions|
+10. Maintenance                                    |nvim-config-maintenance|
+
+=============================================================================
+1. OVERVIEW                                           *nvim-config-overview*
+
+This is a modular Lua configuration for Neovim 0.11+ using lazy.nvim and the
+Nord color palette. It was created and is maintained by Ivan Cherniy.
+
+  Website:     https://r4ven.me
+  Repository:  https://github.com/r4ven-me/neovim
+
+Plugin specifications are stored separately under:
+
+  ~/.config/nvim/lua/plugins/
+
+The full Markdown documentation is available at:
+
+  ~/.config/nvim/README.md
+
+Open this help page with Shift-F1 or:
+
+  :help nvim-config
+
+=============================================================================
+2. REQUIREMENTS                                   *nvim-config-requirements*
+
+Required software:
+
+  - Neovim 0.11 or newer
+  - Git
+  - ripgrep
+  - a true-color terminal
+  - a Nerd Font
+
+Build Neovim from source when the distribution package is too old: >sh
+
+  git clone https://github.com/neovim/neovim
+  cd neovim
+  make CMAKE_BUILD_TYPE=Release
+  sudo make install
+<
+
+CodeCompanion additionally uses Node.js 22 and the Claude/Codex ACP adapters: >sh
+
+  npm install -g node@22
+  npm install -g @agentclientprotocol/claude-agent-acp
+  npm install -g @agentclientprotocol/codex-acp
+<
+
+=============================================================================
+3. LINTERS                                            *nvim-config-linters*
+
+Prefer linters from the standard Debian/LMDE repositories over pip packages.
+They receive system updates, do not modify the Python user environment, and
+are immediately available in the normal PATH: >sh
+
+  sudo apt update
+  sudo apt install shellcheck lua-check pylint yamllint jsonlint zsh
+<
+
+Package names and commands:
+
+  lua-check          provides luacheck for Lua
+  shellcheck         provides shellcheck for sh and bash
+  pylint             provides pylint for Python
+  yamllint           provides yamllint for YAML
+  jsonlint           provides jsonlint for JSON
+  zsh                provides the Zsh syntax checker
+
+Ruff is supported when installed, but is not present in the standard LMDE 7 /
+Debian 13 repository. Pylint is the configured repository-based fallback, so
+installing Ruff through pip is optional.
+
+Repository-provided formatters: >sh
+
+  sudo apt install shfmt jq black
+<
+
+=============================================================================
+4. KEYBINDINGS                                     *nvim-config-keybindings*
+
+The leader key is Space.
+
+  Shift-F1          Open this help page
+  F13               Git add/commit/push current file directory
+  F2                Find files near the current file
+  Shift-F2          Search contents near the current file
+  F3                Toggle Neo-tree
+  F4                Toggle the bottom terminal
+  F5                Toggle CodeCompanion
+  Shift-F5          Save and run a shell or Python file
+  F6                Workspace diagnostics
+  Shift-F6          Current-buffer diagnostics
+  F7                Enable lint and run it immediately
+  Shift-F7 / F19    Disable lint and clear diagnostics
+  F8                Git status
+  Shift-F8          Current-file Git history
+  F9-F12            Load numbered sessions
+  Shift-F9-F12      Save numbered sessions
+  Shift-h/l         Previous/next buffer
+  Ctrl-Up/Down      Resize the terminal
+  Space f           Format buffer or visual selection
+  Space d           Show line diagnostics
+  [d / ]d           Previous/next diagnostic
+  Space ai          Toggle CodeCompanion
+  Space aa          CodeCompanion actions
+  WW                Save file
+  WS / WR           Save/restore AutoSession
+  jk                Leave insert mode
+  Esc Esc           Dismiss messages or search highlighting
+
+Function keys are forwarded from ToggleTerm to the last editor window.
+
+=============================================================================
+5. AI CHAT                                                 *nvim-config-ai*
+
+Open or hide the right-hand chat with F5, Space-ai, the computer icon in the
+top-right Bufferline area, or:
+
+  :CodeCompanionChat Toggle
+
+F5 works in both normal and insert mode. Inside the chat:
+
+  Ctrl-S / Enter    Send the prompt
+  ga                Select an adapter
+  Ctrl-C            Close the chat
+  q                 Stop the current request
+  ?                 Show chat-local mappings
+
+Codex ACP with ChatGPT authentication is the default adapter. Claude Code can
+be selected with ga. For a Claude subscription, run `claude setup-token` and
+export the result as CLAUDE_CODE_OAUTH_TOKEN.
+
+Useful editor context references:
+
+  #{buffer}          Current buffer
+  #{buffers}         All open file buffers
+  #{selection}       Visual selection
+  #{diagnostics}     Diagnostics
+  #{diff}            Git diff
+  #{terminal}        Recent terminal output
+  #{viewport}        Visible editor content
+
+Model responses are rendered with render-markdown.nvim. Rule files remain
+available to the agent, but the repetitive Context block is hidden.
+
+Direct CLI sessions:
+
+  :CodeCompanionCLI agent=claude_code
+  :CodeCompanionCLI agent=codex
+
+=============================================================================
+6. TELESCOPE                                        *nvim-config-telescope*
+
+Telescope searches relative to the directory of the current file:
+
+  F2                Find files
+  Shift-F2          Live grep
+  F6                Workspace diagnostics
+  Shift-F6          Current-buffer diagnostics
+  F8                Git status
+  Shift-F8          Current-file commits
+
+Use Ctrl-U and Ctrl-D to scroll the preview pane.
+
+=============================================================================
+7. TERMINAL                                          *nvim-config-terminal*
+
+F4 toggles terminal number 1 as a full-width horizontal split. Ctrl-Up and
+Ctrl-Down change its height. The terminal opens in insert mode.
+
+Neo-tree, ToggleTerm, and CodeCompanion close automatically when the last
+normal file window is closed.
+
+=============================================================================
+8. LINT AND FORMAT                                 *nvim-config-lint-format*
+
+Linting starts disabled. F7 enables it for the current Neovim session, runs a
+check immediately, and then refreshes diagnostics 500 ms after entering a
+buffer, saving, leaving insert mode, or changing text. Separate debounce timers
+are maintained per buffer, so a delayed check cannot run against the wrong
+file.
+
+Shift-F7 or F19 disables linting
+and clears its diagnostics. Commands:
+
+  :Lint
+  :LinterToggle
+  :LintToggle
+
+Space-f runs conform.nvim asynchronously. Formatting is not performed on save.
+Only installed external tools are used.
+
+=============================================================================
+9. SESSIONS                                          *nvim-config-sessions*
+
+WS saves and WR restores the AutoSession session. Auto-restore on startup is
+disabled. Neo-tree is temporarily closed during a save and then restored.
+
+F9-F12 load explicit session slots 1-4. Shift-F9 through Shift-F12 save them.
+
+State lives under ~/.local/state/nvim/ in swap, undo, backup, sessions, and
+shada subdirectories.
+
+=============================================================================
+10. MAINTENANCE                                   *nvim-config-maintenance*
+
+Plugin and parser maintenance:
+
+  :Lazy
+  :Lazy update
+  :TSUpdate
+  :checkhealth
+  :checkhealth codecompanion
+
+Validate startup without opening the UI: >sh
+
+  nvim --headless '+lua print("config ok")' '+qa'
+<
+
+For the complete guide, read ~/.config/nvim/README.md.
+
+vim:tw=78:ts=8:noet:ft=help:norl:
